@@ -2,7 +2,13 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>📱 Passatore 2027 - Hub di Controllo v4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Passatore 2027">
+    
+    <title>📱 Passatore 2027 - Hub di Controllo v5</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -16,11 +22,13 @@
         }
 
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             background-color: var(--bg-color); 
             color: var(--text-color); 
-            padding: 20px; 
+            padding: 15px; 
             margin: 0;
+            /* Evita lo zoom accidentale su iOS quando fai doppio tap */
+            touch-action: manipulation; 
         }
 
         .container { 
@@ -28,7 +36,7 @@
             margin: 0 auto; 
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
+            gap: 20px;
         }
 
         @media (max-width: 900px) {
@@ -37,42 +45,51 @@
 
         .panel {
             background-color: var(--card-bg); 
-            padding: 25px; 
-            border-radius: 8px; 
+            padding: 20px; 
+            border-radius: 12px; 
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         h1, h2, h3, h4 { color: #ffffff; margin-top: 0; }
-        h1 { border-bottom: 2px solid var(--accent-blue); padding-bottom: 10px; font-size: 24px; }
+        h1 { border-bottom: 2px solid var(--accent-blue); padding-bottom: 10px; font-size: 22px; }
         h2 { border-bottom: 1px solid var(--border-color); padding-bottom: 5px; font-size: 18px; margin-top: 20px; }
         h4 { margin-bottom: 5px; font-size: 15px; color: #ffffff; }
 
+        /* Ottimizzazione Tabella per Mobile */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--border-color); }
         th { background-color: #252525; color: var(--accent-blue); }
         
         .phase-box {
             background: #252525;
-            padding: 10px;
+            padding: 12px;
             border-left: 3px solid var(--accent-blue);
             margin-bottom: 10px;
             font-size: 13px;
+            border-radius: 0 4px 4px 0;
         }
 
-        /* Sistema Tab Esercizi */
+        /* Sistema Tab Esercizi Ottimizzato per dita */
         .tab-container { margin-top: 15px; }
         .tab-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
         .tab-btn {
             background-color: #252525;
             color: var(--text-muted);
             border: 1px solid var(--border-color);
-            padding: 8px 16px;
+            padding: 10px 16px;
             cursor: pointer;
             font-weight: bold;
-            border-radius: 4px;
-            width: auto;
+            border-radius: 6px;
+            flex: 1;
+            font-size: 14px;
             margin: 0;
+            text-align: center;
         }
         .tab-btn.active {
             background-color: var(--accent-blue);
@@ -85,66 +102,67 @@
         .exercise-item {
             background: #252525;
             padding: 12px;
-            border-radius: 4px;
+            border-radius: 6px;
             margin-bottom: 10px;
             border-left: 3px solid var(--text-muted);
         }
-        .exercise-item p { margin: 4px 0; font-size: 13px; }
+        .exercise-item p { margin: 6px 0; font-size: 13px; line-height: 1.4; }
 
-        /* Form di inserimento */
+        /* Form e Input "Touch Friendly" (Altezza minima 44px per linee guida Apple) */
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: var(--text-muted); }
+        label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 14px; color: var(--text-muted); }
         input[type="number"], textarea, select { 
             width: 100%; 
-            padding: 10px; 
+            padding: 12px; 
             background-color: #252525;
             border: 1px solid var(--border-color); 
-            border-radius: 4px; 
+            border-radius: 6px; 
             color: var(--text-color);
             box-sizing: border-box; 
+            font-size: 16px; /* 16px minimi evitano lo zoom automatico di iOS all'inserimento */
         }
         input:focus, textarea:focus, select:focus { outline: 1px solid var(--accent-blue); }
         
         button { 
             background-color: var(--accent-blue); 
             color: white; 
-            padding: 12px 20px; 
+            padding: 14px 20px; 
             border: none; 
-            border-radius: 4px; 
+            border-radius: 6px; 
             cursor: pointer; 
             font-size: 16px; 
             font-weight: bold;
             width: 100%;
             margin-bottom: 10px;
+            transition: background 0.2s;
         }
         button.btn-secondary { background-color: #444; }
         button.btn-secondary:hover { background-color: #555; }
-        button.btn-danger { background-color: #c0392b; width: auto; padding: 5px 10px; font-size: 12px; margin: 0; }
+        button.btn-danger { background-color: #c0392b; width: auto; padding: 8px 14px; font-size: 13px; margin: 0; }
         button.btn-danger:hover { background-color: #e74c3c; }
-        button.btn-edit { background-color: #2980b9; width: auto; padding: 5px 10px; font-size: 12px; margin: 0; margin-right: 5px; }
+        button.btn-edit { background-color: #2980b9; width: auto; padding: 8px 14px; font-size: 13px; margin: 0; margin-right: 8px; }
         button.btn-edit:hover { background-color: #3498db; }
         button:hover { background-color: #2980b9; }
 
-        .log-container { max-height: 400px; overflow-y: auto; margin-top: 15px; }
+        .log-container { max-height: 450px; overflow-y: auto; margin-top: 15px; }
         .log-entry { 
             background: #252525; 
             border-left: 4px solid var(--accent-green); 
-            padding: 12px; 
-            margin-bottom: 10px; 
-            border-radius: 4px;
+            padding: 14px; 
+            margin-bottom: 12px; 
+            border-radius: 6px;
             font-size: 14px;
-            position: relative;
         }
         .log-entry.skipped { border-left-color: var(--accent-red); }
         .date { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
         
-        .actions { margin-top: 8px; text-align: right; }
+        .actions { margin-top: 12px; text-align: right; }
 
         .backup-zone {
             margin-top: 20px;
             padding: 15px;
             background: #252525;
-            border-radius: 6px;
+            border-radius: 8px;
             border: 1px dashed var(--border-color);
         }
     </style>
@@ -153,7 +171,6 @@
 
 <div class="container">
     
-    <!-- PANNELLO SINISTRO: ROADMAP & ENCICLOPEDIA -->
     <div class="panel">
         <h1>🎯 Strategia Passatore 2027</h1>
         
@@ -176,57 +193,58 @@
         </div>
 
         <h2>🗓️ Lo Schema Settimanale Tipo</h2>
-        <table>
-            <tr>
-                <th>Giorno</th>
-                <th>Allenamento</th>
-                <th>Focus Mente / Anti-Fumo</th>
-            </tr>
-            <tr>
-                <td><strong>Lun</strong></td>
-                <td>Riposo totale</td>
-                <td>Idratazione. Gestisci i picchi di stress.</td>
-            </tr>
-            <tr>
-                <td><strong>Mar</strong></td>
-                <td>Corsa Qualità (50')</td>
-                <td>Goditi i polmoni aperti post-corsa.</td>
-            </tr>
-            <tr>
-                <td><strong>Mer</strong></td>
-                <td>Forza (Scheda A o B)</td>
-                <td>Scarica la frustrazione sui pesi.</td>
-            </tr>
-            <tr>
-                <td><strong>Gio</strong></td>
-                <td>Riposo attivo</td>
-                <td>In auto ascolta podcast tech/informatica.</td>
-            </tr>
-            <tr>
-                <td><strong>Ven</strong></td>
-                <td>Corsa Rigenerante (40')</td>
-                <td>Inizia il carico di carboidrati.</td>
-            </tr>
-            <tr>
-                <td><strong>Sab</strong></td>
-                <td>Forza Leggera (20')</td>
-                <td>Stretching e focus sulla famiglia.</td>
-            </tr>
-            <tr>
-                <td><strong>Dom</strong></td>
-                <td>Il Lungo (Distanza progressiva)</td>
-                <td>Costruisci la testa. Niente fumo.</td>
-            </tr>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th>Giorno</th>
+                    <th>Allenamento</th>
+                    <th>Focus Mente / Anti-Fumo</th>
+                </tr>
+                <tr>
+                    <td><strong>Lun</strong></td>
+                    <td>Riposo totale</td>
+                    <td>Idratazione. Gestisci i picchi di stress.</td>
+                </tr>
+                <tr>
+                    <td><strong>Mar</strong></td>
+                    <td>Corsa Qualità (50')</td>
+                    <td>Goditi i polmoni aperti post-corsa.</td>
+                </tr>
+                <tr>
+                    <td><strong>Mer</strong></td>
+                    <td>Forza (Scheda A o B)</td>
+                    <td>Scarica la frustrazione sui pesi.</td>
+                </tr>
+                <tr>
+                    <td><strong>Gio</strong></td>
+                    <td>Riposo attivo</td>
+                    <td>In auto ascolta podcast tech/informatica.</td>
+                </tr>
+                <tr>
+                    <td><strong>Ven</strong></td>
+                    <td>Corsa Rigenerante (40')</td>
+                    <td>Inizia il carico di carboidrati.</td>
+                </tr>
+                <tr>
+                    <td><strong>Sab</strong></td>
+                    <td>Forza Leggera (20')</td>
+                    <td>Stretching e focus sulla famiglia.</td>
+                </tr>
+                <tr>
+                    <td><strong>Dom</strong></td>
+                    <td>Il Lungo (Distanza progressiva)</td>
+                    <td>Costruisci la testa. Niente fumo.</td>
+                </tr>
+            </table>
+        </div>
 
         <h2>🏋️‍♂️ Enciclopedia degli Esercizi di Forza</h2>
         <div class="tab-container">
             <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchTab('schedaA', this)">Scheda A: Potenza</button>
-                <button class="tab-btn" onclick="switchTab('schedaB', this)">Scheda B: Stabilità</button>
+                <button class="tab-btn active" onclick="switchTab('schedaA', this)">Scheda A</button>
+                <button class="tab-btn" onclick="switchTab('schedaB', this)">Scheda B</button>
             </div>
 
-            <!-- SCHEDA A -->
             <div id="schedaA" class="tab-content active">
                 <div class="exercise-item">
                     <h4>01. Goblet Squat</h4>
@@ -260,7 +278,6 @@
                 </div>
             </div>
 
-            <!-- SCHEDA B -->
             <div id="schedaB" class="tab-content">
                 <div class="exercise-item">
                     <h4>01. Affondi Bulgari</h4>
@@ -296,7 +313,6 @@
         </div>
     </div>
     
-    <!-- PANNELLO DESTRO: DIARIO E INSERIMENTO -->
     <div class="panel">
         <h1 id="form-title">📝 Registra Sessione Quotidiana</h1>
         
@@ -344,7 +360,7 @@
         <div class="backup-zone">
             <h3>💾 Sicurezza Dati</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button class="btn-secondary" onclick="exportData()" style="font-size:13px; padding:8px; margin:0;">⬇️ Salva Backup (.json)</button>
+                <button class="btn-secondary" onclick="exportData()" style="font-size:13px; padding:8px; margin:0;">⬇️ Salva Backup</button>
                 <button class="btn-secondary" onclick="document.getElementById('importFile').click()" style="font-size:13px; padding:8px; margin:0;">⬆️ Carica Backup</button>
             </div>
             <input type="file" id="importFile" style="display:none" onchange="importData(this)">
@@ -358,15 +374,10 @@
 
 <script>
     function switchTab(tabId, btn) {
-        // Nascondi tutti i contenuti dei tab
         const contents = document.querySelectorAll('.tab-content');
         contents.forEach(c => c.classList.remove('active'));
-        
-        // Rimuovi la classe active da tutti i bottoni
         const buttons = document.querySelectorAll('.tab-btn');
         buttons.forEach(b => b.classList.remove('active'));
-        
-        // Mostra il tab corrente e attiva il bottone
         document.getElementById(tabId).classList.add('active');
         btn.classList.add('active');
     }
@@ -398,7 +409,7 @@
     }
 
     function deleteEntry(index) {
-        if (confirm('Sei sicuro di voler eliminare questa sessione dallo storico?')) {
+        if (confirm('Sei sicuro di voler eliminare questa sessione?')) {
             let history = JSON.parse(localStorage.getItem('giuseppe_passatore_log')) || [];
             history.splice(index, 1);
             localStorage.setItem('giuseppe_passatore_log', JSON.stringify(history));
@@ -409,6 +420,7 @@
         }
     }
 
+    // Corretto scroll per mobile eliminando interferenze con la tastiera
     function editEntry(index) {
         let history = JSON.parse(localStorage.getItem('giuseppe_passatore_log')) || [];
         const entry = history[index];
@@ -419,11 +431,11 @@
         document.getElementById('notes').value = entry.notes;
         document.getElementById('editIndex').value = index;
 
-        document.getElementById('form-title').innerText = `✏️ Modifica Sessione del ${entry.date}`;
+        document.getElementById('form-title').innerText = `✏️ Modifica del ${entry.date}`;
         document.getElementById('submitBtn').innerText = 'Salva Modifiche';
         document.getElementById('cancelEditBtn').style.display = 'block';
         
-        document.getElementById('form').scrollIntoView({ behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function cancelEdit() {
@@ -448,7 +460,7 @@
         stream.innerHTML = '';
         
         if(history.length === 0) {
-            stream.innerHTML = '<p style="color: var(--text-muted); font-style: italic;">Nessun allenamento registrato. Inizia oggi!</p>';
+            stream.innerHTML = '<p style="color: var(--text-muted); font-style: italic;">Nessun allenamento registrato.</p>';
             return;
         }
         
@@ -499,7 +511,7 @@
                     renderLog();
                     alert('Dati importati con successo!');
                 } else {
-                    alert('Il file non sembra essere un backup valido.');
+                    alert('Il file non è un backup valido.');
                 }
             } catch (err) {
                 alert('Errore nella lettura del file.');
